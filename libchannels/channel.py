@@ -20,6 +20,8 @@
 
 import configparser
 
+import libchannels.common
+
 from aptsources.sourceslist import SourceEntry
 
 class Channel(configparser.ConfigParser):
@@ -73,6 +75,26 @@ class Channel(configparser.ConfigParser):
 				continue
 			
 			self.repositories[repository] = None # check() will eventually change that to the appropriate SourceEntry
+	
+	def disable(self):
+		"""
+		Disables enitrely the channel.
+		"""
+		
+		for repository, source_entry in self.repositories.items():
+			source_entry.set_enabled(False)
+		
+		libchannels.common.sourceslist.save()
+	
+	def enable(self):
+		"""
+		Enables the channel.
+		"""
+		
+		for repository, source_entry in self.repositories.items():
+			source_entry.set_enabled(True)
+		
+		libchannels.common.sourceslist.save()
 	
 	def __str__(self):
 		"""

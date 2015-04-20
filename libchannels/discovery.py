@@ -31,6 +31,7 @@ class ChannelDiscovery:
 	and is used to get a precise status of a given channel.
 	"""
 	
+	cache = {}
 	channels = {}
 	
 	def __init__(self):
@@ -44,9 +45,7 @@ class ChannelDiscovery:
 		"""
 		Discovers the currently enabled channels.
 		"""
-		
-		cache = {}
-		
+				
 		# Pre-load channels
 		for channel in os.listdir(libchannels.config.CHANNEL_SEARCH_PATH):
 			
@@ -56,7 +55,7 @@ class ChannelDiscovery:
 			# Obtain name
 			channel = channel.replace(".channel","")
 			
-			cache[channel] = libchannels.channel.Channel(channel)
+			self.cache[channel] = libchannels.channel.Channel(channel)
 				
 		# Loop through enabled repositories to get a list of enabled channels
 		for repository in libchannels.common.sourceslist:
@@ -102,7 +101,7 @@ class ChannelDiscovery:
 						codename = " ".join(line[1:])
 			
 			# Search for the right channel
-			for channel, obj in cache.items():
+			for channel, obj in self.cache.items():
 				obj.check(
 					repository.uri + "/" if not repository.uri.endswith("/") else repository.uri,
 					origin,
@@ -114,7 +113,7 @@ class ChannelDiscovery:
 			# Close
 			if release_file: release_file.close()
 		
-		for channel, obj in cache.items():
+		for channel, obj in self.cache.items():
 			if obj.enabled:
 				self.channels[channel] = obj
 

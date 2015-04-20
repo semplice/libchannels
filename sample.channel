@@ -1,0 +1,9 @@
+[channel]
+name = Sample channel
+description = A sample channel.
+
+[repo1]
+default_mirror = http://a.sample.chann.nl/debian/
+origin = Me
+codename = unstable
+components = main
