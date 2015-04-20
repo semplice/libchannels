@@ -86,26 +86,27 @@ class ChannelDiscovery:
 				# Release found
 				release_file = open(Release)
 			else:
-				# Nothing found, continue
-				continue
+				# Nothing found, we should try our luck with the default mirror
+				release_file = None
 						
 			# Obtain informations
 			origin = label = codename = None
-			for line in release_file:
-				line = line.strip().split(" ")
-				if line[0] == "Origin:":
-					origin = " ".join(line[1:])
-				elif line[0] == "Label:":
-					label = " ".join(line[1:])
-				elif line[0] == "Codename:":
-					codename = " ".join(line[1:])
+			if release_file:
+				for line in release_file:
+					line = line.strip().split(" ")
+					if line[0] == "Origin:":
+						origin = " ".join(line[1:])
+					elif line[0] == "Label:":
+						label = " ".join(line[1:])
+					elif line[0] == "Codename:":
+						codename = " ".join(line[1:])
 			
 			# Search for the right channel
 			for channel, obj in cache.items():
-				obj.check(origin, label, codename, repository)
+				obj.check(repository.uri, origin, label, repository.dist if not codename else codename, repository)
 			
 			# Close
-			release_file.close()
+			if release_file: release_file.close()
 		
 		for channel, obj in cache.items():
 			if obj.enabled:

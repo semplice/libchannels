@@ -81,7 +81,7 @@ class Channel(configparser.ConfigParser):
 		
 		return self["channel"]["name"]
 	
-	def check(self, origin, label, codename, source_entry):
+	def check(self, uri, origin, label, codename, source_entry):
 		"""
 		Sets the given SourceEntry into self.repositories if it matches
 		the other information given.
@@ -91,9 +91,11 @@ class Channel(configparser.ConfigParser):
 			
 			#print(self["channel"]["name"], origin, codename, source_entry)
 			
-			if origin != self[repository]["origin"]:
+			if ((origin and origin != self[repository]["origin"]) or
+				(not origin and not self[repository]["default_mirror"] == uri)
+			):
 				continue
-			
+				
 			if codename != self[repository]["codename"]:
 				continue
 			
