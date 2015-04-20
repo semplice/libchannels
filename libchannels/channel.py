@@ -92,7 +92,11 @@ class Channel(configparser.ConfigParser):
 			#print(self["channel"]["name"], origin, codename, source_entry)
 			
 			if ((origin and origin != self[repository]["origin"]) or
-				(not origin and not self[repository]["default_mirror"] == uri)
+				(not origin and not (
+					self[repository]["default_mirror"] + "/"
+					if not self[repository]["default_mirror"].endswith("/")
+					else self[repository]["default_mirror"]
+				) == uri)
 			):
 				continue
 				

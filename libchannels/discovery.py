@@ -103,7 +103,13 @@ class ChannelDiscovery:
 			
 			# Search for the right channel
 			for channel, obj in cache.items():
-				obj.check(repository.uri, origin, label, repository.dist if not codename else codename, repository)
+				obj.check(
+					repository.uri + "/" if not repository.uri.endswith("/") else repository.uri,
+					origin,
+					label,
+					repository.dist if not codename else codename,
+					repository
+				)
 			
 			# Close
 			if release_file: release_file.close()
