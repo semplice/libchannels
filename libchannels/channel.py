@@ -83,7 +83,8 @@ class Channel(configparser.ConfigParser):
 	
 	def check(self, origin, label, codename, source_entry):
 		"""
-		Returns True if the given InRelease file stream 
+		Sets the given SourceEntry into self.repositories if it matches
+		the other information given.
 		"""
 				
 		for repository in self.repositories:
@@ -102,6 +103,16 @@ class Channel(configparser.ConfigParser):
 			# Good!
 			self.repositories[repository] = source_entry
 	
+	def is_sourceentry_enabled(self, repository):
+		"""
+		Returns True if the sourceentry is enabled, False if not.
+		"""
+				
+		return (
+			type(repository) == SourceEntry and
+			not repository.disabled
+		) 
+	
 	@property
 	def enabled(self):
 		"""
@@ -109,4 +120,4 @@ class Channel(configparser.ConfigParser):
 		"""
 		
 		#return (not (None in self.repositories.values()))
-		return (not (False in [(type(x) == SourceEntry) for x in self.repositories.values()]))
+		return (not (False in [self.is_sourceentry_enabled(x) for x in self.repositories.values()]))
