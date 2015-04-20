@@ -7,3 +7,9 @@ default_mirror = http://a.sample.chann.nl/debian/
 origin = Me
 codename = unstable
 components = main
+
+[repo2]
+default_mirror = http://repo2.two/debian/
+origin = Me
+codename = unstable
+components = main
