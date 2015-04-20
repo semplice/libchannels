@@ -1,0 +1,10 @@
+[channel]
+name = Debian unstable channel
+description = Debian unstable "sid"
+provides = base
+
+[unstable]
+default_mirror = http://ftp.debian.org/debian/
+origin = Debian
+codename = sid
+components = main contrib non-free

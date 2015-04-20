@@ -1,0 +1,17 @@
+[channel]
+name = Semplice for Workstations 2015
+description = Channel for Semplice for Workstations 2015
+depends = jessie
+provides = semplice-base
+
+[main]
+default_mirror = http://archive.semplice-linux.org/semplice/
+origin = Semplice Project
+codename = jessie
+components = main contrib non-free
+
+[changes]
+default_mirror = http://archive.semplice-linux.org/semplice/
+origin = Semplice Project
+codename = changes-jessie
+components = main contrib non-free

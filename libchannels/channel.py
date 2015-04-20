@@ -1,0 +1,112 @@
+# -*- coding: utf-8 -*-
+#
+# libchannels - update channels management library
+# Copyright (C) 2015 Eugenio "g7" Paolantonio
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+#
+
+import configparser
+
+from aptsources.sourceslist import SourceEntry
+
+class Channel(configparser.ConfigParser):
+	
+	"""
+	A Channel is, basically, a set of Debian repositories with Dependency
+	and "Provider" support.
+	
+	A channel should have the ".channel" extension and it should look like this:
+	
+		[channel]
+		name = Channel name
+		description = Channel description
+		depends = eventual-dependencies
+		provides = eventual-provider
+		
+		[repo1]
+		default_mirror = http://path/to/mirror
+		origin = Repository origin, as given in the Release file
+		codename = distribution codename
+		components = repository components
+
+		[repo2]
+		default_mirror = http://path/to/mirror
+		origin = Repository origin, as given in the Release file
+		codename = distribution codename
+		components = repository components
+		
+		[repo3]
+		...
+	
+	Enabling a channel will enable every repository in the set.
+	"""
+		
+	def __init__(self, channel_name):
+		"""
+		Initializes the class.
+		"""
+		
+		super().__init__()
+		
+		self.repositories = {}
+		
+		self.channel_name = channel_name
+		
+		self.read("./%s.channel" % channel_name) # FIXME: Should properly retrieve the path!
+		
+		# Build repository dictionary
+		for repository in self.sections():
+			if repository == "channel":
+				continue
+			
+			self.repositories[repository] = None # check() will eventually change that to the appropriate SourceEntry
+	
+	def __str__(self):
+		"""
+		Returns a stringified version of the object.
+		"""
+		
+		return self["channel"]["name"]
+	
+	def check(self, origin, label, codename, source_entry):
+		"""
+		Returns True if the given InRelease file stream 
+		"""
+				
+		for repository in self.repositories:
+			
+			#print(self["channel"]["name"], origin, codename, source_entry)
+			
+			if origin != self[repository]["origin"]:
+				continue
+			
+			if codename != self[repository]["codename"]:
+				continue
+			
+			#if label != self[repository]["label"]:
+			#	continue
+			
+			# Good!
+			self.repositories[repository] = source_entry
+	
+	@property
+	def enabled(self):
+		"""
+		Returns True if the channel is enabled, False if not.
+		"""
+		
+		#return (not (None in self.repositories.values()))
+		return (not (False in [(type(x) == SourceEntry) for x in self.repositories.values()]))

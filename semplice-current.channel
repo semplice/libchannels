@@ -1,0 +1,17 @@
+[channel]
+name = Semplice current channel
+description = Semplice main update channel
+depends = sid
+provides = semplice-base
+
+[main]
+default_mirror = http://archive.semplice-linux.org/semplice/
+origin = Semplice Project
+codename = unstable
+components = main contrib non-free
+
+[changes]
+default_mirror = http://archive.semplice-linux.org/semplice/
+origin = Semplice Project
+codename = changes-unstable
+components = main contrib non-free

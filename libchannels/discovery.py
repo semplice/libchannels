@@ -1,0 +1,113 @@
+# -*- coding: utf-8 -*-
+#
+# libchannels - update channels management library
+# Copyright (C) 2015 Eugenio "g7" Paolantonio
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+#
+
+import os
+
+import libchannels.channel
+import libchannels.common
+import libchannels.config
+
+class ChannelDiscovery:
+	
+	"""
+	The ChannelDiscovery() class permits to discover every enabled channel
+	and is used to get a precise status of a given channel.
+	"""
+	
+	channels = {}
+	
+	def __init__(self):
+		"""
+		Initializes the class.
+		"""
+		
+		pass
+	
+	def discover(self):
+		"""
+		Discovers the currently enabled channels.
+		"""
+		
+		cache = {}
+		
+		# Pre-load channels
+		for channel in os.listdir(libchannels.config.CHANNEL_SEARCH_PATH):
+			
+			if not channel.endswith(".channel"):
+				continue
+			
+			# Obtain name
+			channel = channel.replace(".channel","")
+			
+			cache[channel] = libchannels.channel.Channel(channel)
+				
+		# Loop through enabled repositories to get a list of enabled channels
+		for repository in libchannels.common.sourceslist:
+			if repository.disabled or repository.uri == "" or repository.type == "deb-src":
+				continue
+			
+			# Generate InRelease filename from repository URI
+			release_base = repository.uri.replace("/","_").split("_")
+			# Remove empty (former) trailslashes
+			while release_base.count("") > 0:
+				release_base.remove("")
+			# Add other informations
+			release_base += ["dists", repository.dist]
+			# Remove protocol
+			release_base.pop(0)
+			
+			# InRelease
+			InRelease = os.path.join("/var/lib/apt/lists", "_".join(release_base + ["InRelease"]))
+			# Release (fallback)
+			Release = os.path.join("/var/lib/apt/lists", "_".join(release_base[1:] + ["Release"]))
+			
+			# Check existence
+			if os.path.exists(InRelease):
+				# InRelease found
+				release_file = open(InRelease)
+			elif os.path.exists(Release):
+				# Release found
+				release_file = open(Release)
+			else:
+				# Nothing found, continue
+				continue
+						
+			# Obtain informations
+			origin = label = codename = None
+			for line in release_file:
+				line = line.strip().split(" ")
+				if line[0] == "Origin:":
+					origin = " ".join(line[1:])
+				elif line[0] == "Label:":
+					label = " ".join(line[1:])
+				elif line[0] == "Codename:":
+					codename = " ".join(line[1:])
+			
+			# Search for the right channel
+			for channel, obj in cache.items():
+				obj.check(origin, label, codename, repository)
+			
+			# Close
+			release_file.close()
+		
+		for channel, obj in cache.items():
+			if obj.enabled:
+				self.channels[channel] = obj
+
