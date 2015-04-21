@@ -107,6 +107,16 @@ class Channel(configparser.ConfigParser):
 		
 		libchannels.common.sourceslist.save()
 	
+	def get_dependencies(self):
+		"""
+		Returns a list of the channel's dependencies.
+		"""
+		
+		if "depends" in self["channel"]:
+			return self["channel"]["depends"].split(" ")
+		else:
+			return []
+	
 	def __str__(self):
 		"""
 		Returns a stringified version of the object.
