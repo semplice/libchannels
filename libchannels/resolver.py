@@ -52,6 +52,19 @@ class DependencyResolver:
 			print("Channel %s depends on %s" % (channel, dependency))
 			self.relations[channel].append(Dependency(self.cache[dependency]))
 	
+	def get_channel_blockers(self, channel):
+		"""
+		Returns a list of dependencies to statisfy before the given channel
+		can be marked as "enableable".
+		"""
+		
+		result = []
+		for dependency in self.relations[channel]:
+			if not dependency:
+				result.append(dependency)
+		
+		return result
+	
 	def is_channel_enableable(self, channel):
 		"""
 		Returns True it the channel can be enabled, False if not.

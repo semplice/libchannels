@@ -24,6 +24,10 @@ else:
 print("semplice-current", not (False in resolver.relations["semplice-current"]))
 print(resolver.is_channel_enableable("semplice-jessie"))
 
+# Print blockers for some channels
+for channel in ["semplice-current", "semplice-jessie"]:
+	print("%s blockers: %s" % (channel, resolver.get_channel_blockers(channel)))
+
 sys.exit(0)
 
 # Disable sample
