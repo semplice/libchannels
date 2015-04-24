@@ -112,20 +112,14 @@ class Channel(configparser.ConfigParser):
 		Returns a list of the channel's dependencies.
 		"""
 		
-		if "depends" in self["channel"]:
-			return self["channel"]["depends"].split(" ")
-		else:
-			return []
+		return self["channel"]["depends"].split(" ") if "depends" in self["channel"] else []
 	
 	def get_conflicts(self):
 		"""
 		Returns a list of the channel's conflicts.
 		"""
 		
-		if "conflicts" in self["channel"]:
-			return self["channel"]["conflicts"].split(" ")
-		else:
-			return []
+		return self["channel"]["conflicts"].split(" ") if "conflicts" in self["channel"] else []
 	
 	def get_providers(self):
 		"""

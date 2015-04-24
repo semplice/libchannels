@@ -79,13 +79,8 @@ class DependencyResolver:
 		can be marked as "enableable".
 		"""
 		
-		result = []
-		for relation in self.relations[channel]:
-			if not relation:
-				result.append(relation)
-		
-		return result
-	
+		return [relation for relation in self.relations[channel] if not relation]
+			
 	def is_channel_enableable(self, channel):
 		"""
 		Returns True it the channel can be enabled, False if not.
