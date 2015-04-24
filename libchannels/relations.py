@@ -51,13 +51,6 @@ class Dependency(Relation):
 	The Dependency() relation handles a dependency between two channels.
 	"""
 	
-	def __init__(self, target):
-		"""
-		Initializes the relation.
-		"""
-		
-		super().__init__(target)
-	
 	def __bool__(self):
 		"""
 		Returns True if the dependency is statisfied, False if not.
@@ -65,3 +58,15 @@ class Dependency(Relation):
 		
 		return self.target.enabled
 
+class Conflict(Relation):
+	
+	"""
+	The Conflict() relation handles a conflict between two channels.
+	"""
+	
+	def __bool__(self):
+		"""
+		Returns True if the conflict is clear, False if not.
+		"""
+		
+		return (not self.target.enabled)

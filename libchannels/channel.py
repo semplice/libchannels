@@ -117,6 +117,16 @@ class Channel(configparser.ConfigParser):
 		else:
 			return []
 	
+	def get_conflicts(self):
+		"""
+		Returns a list of the channel's conflicts.
+		"""
+		
+		if "conflicts" in self["channel"]:
+			return self["channel"]["conflicts"].split(" ")
+		else:
+			return []
+	
 	def __str__(self):
 		"""
 		Returns a stringified version of the object.

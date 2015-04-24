@@ -18,7 +18,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-from libchannels.relations import Dependency
+from libchannels.relations import Dependency, Conflict
 
 class DependencyResolver:
 	
@@ -51,17 +51,20 @@ class DependencyResolver:
 		for dependency in self.cache[channel].get_dependencies():
 			print("Channel %s depends on %s" % (channel, dependency))
 			self.relations[channel].append(Dependency(self.cache[dependency]))
+		
+		for conflict in self.cache[channel].get_conflicts():
+			self.relations[channel].append(Conflict(self.cache[conflict]))
 	
 	def get_channel_blockers(self, channel):
 		"""
-		Returns a list of dependencies to statisfy before the given channel
+		Returns a list of relations to statisfy before the given channel
 		can be marked as "enableable".
 		"""
 		
 		result = []
-		for dependency in self.relations[channel]:
-			if not dependency:
-				result.append(dependency)
+		for relation in self.relations[channel]:
+			if not relation:
+				result.append(relation)
 		
 		return result
 	
