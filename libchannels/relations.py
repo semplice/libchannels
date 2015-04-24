@@ -70,3 +70,35 @@ class Conflict(Relation):
 		"""
 		
 		return (not self.target.enabled)
+
+class ProviderRelation(Relation):
+	
+	"""
+	The ProviderRelation() relation handles a relation between a channel and
+	a provider.
+	"""
+	
+	def __init__(self, requirer, target, channels):
+		"""
+		Initializes the relation.
+		"""
+		
+		self.requirer = requirer
+		self.target = target
+		self.channels = channels
+	
+	def __bool__(self):
+		"""
+		Returns True if the provider is not statisfied, False if it is.
+		"""
+		
+		return (not
+			(True in [
+				True for x in self.channels if (
+					not x.endswith(".provider") and # Check on channels
+					not self.requirer.channel_name == x and # Ensure we aren't checking ourselves
+					self.target.provider_name in self.channels[x].get_providers() and # Actual provider check 
+					self.channels[x].enabled # If the channel is not enabled, don't worry
+				)
+			])
+		)

@@ -1,7 +1,7 @@
 [channel]
 name = Debian unstable channel
 description = Debian unstable "sid"
-provides = base
+provides = base.provider
 
 [unstable]
 default_mirror = http://ftp.debian.org/debian/

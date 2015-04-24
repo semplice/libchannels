@@ -21,6 +21,7 @@
 import os
 
 import libchannels.channel
+import libchannels.provider
 import libchannels.common
 import libchannels.config
 
@@ -49,13 +50,16 @@ class ChannelDiscovery:
 		# Pre-load channels
 		for channel in os.listdir(libchannels.config.CHANNEL_SEARCH_PATH):
 			
-			if not channel.endswith(".channel"):
+			if not channel.endswith(".channel") and not channel.endswith(".provider"):
 				continue
 			
 			# Obtain name
 			channel = channel.replace(".channel","")
 			
-			self.cache[channel] = libchannels.channel.Channel(channel)
+			if channel.endswith(".provider"):
+				self.cache[channel] = libchannels.provider.Provider(channel)
+			else:
+				self.cache[channel] = libchannels.channel.Channel(channel)
 				
 		# Loop through enabled repositories to get a list of enabled channels
 		for repository in libchannels.common.sourceslist:
@@ -102,6 +106,11 @@ class ChannelDiscovery:
 			
 			# Search for the right channel
 			for channel, obj in self.cache.items():
+				
+				if channel.endswith(".provider"):
+					# Providers do not need checking
+					continue
+				
 				obj.check(
 					repository.uri + "/" if not repository.uri.endswith("/") else repository.uri,
 					origin,
@@ -114,6 +123,6 @@ class ChannelDiscovery:
 			if release_file: release_file.close()
 		
 		for channel, obj in self.cache.items():
-			if obj.enabled:
+			if not channel.endswith(".provider") and obj.enabled:
 				self.channels[channel] = obj
 

@@ -1,7 +1,7 @@
 [channel]
 name = Debian 8.0
 description = Channel providing Debian 8.0 jessie with updates
-provides = base
+provides = base.provider
 
 [main]
 default_mirror = http://ftp.debian.org/debian/

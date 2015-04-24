@@ -2,7 +2,7 @@
 name = Semplice current channel
 description = Semplice main update channel
 depends = sid
-provides = semplice-base
+provides = semplice-base.provider
 
 [main]
 default_mirror = http://archive.semplice-linux.org/semplice/

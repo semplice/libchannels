@@ -127,6 +127,13 @@ class Channel(configparser.ConfigParser):
 		else:
 			return []
 	
+	def get_providers(self):
+		"""
+		Returns a list of the channel's provides.
+		"""
+		
+		return self["channel"]["provides"].split(" ") if "provides" in self["channel"] else []
+	
 	def __str__(self):
 		"""
 		Returns a stringified version of the object.

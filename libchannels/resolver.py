@@ -18,7 +18,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-from libchannels.relations import Dependency, Conflict
+from libchannels.relations import Dependency, Conflict, ProviderRelation
 
 class DependencyResolver:
 	
@@ -38,7 +38,8 @@ class DependencyResolver:
 		
 		# Build relations for every channel
 		for channel in self.cache:
-			self.build_relations(channel)
+			if not channel.endswith(".provider"):
+				self.build_relations(channel)
 	
 	def build_relations(self, channel):
 		"""
@@ -49,11 +50,28 @@ class DependencyResolver:
 		self.relations[channel] = []
 		
 		for dependency in self.cache[channel].get_dependencies():
-			print("Channel %s depends on %s" % (channel, dependency))
-			self.relations[channel].append(Dependency(self.cache[dependency]))
+			self.relations[channel].append(
+				Dependency(
+					self.cache[dependency]
+				)
+			)
 		
 		for conflict in self.cache[channel].get_conflicts():
-			self.relations[channel].append(Conflict(self.cache[conflict]))
+			self.relations[channel].append(
+				Conflict(
+					self.cache[conflict]
+				)
+			)
+		
+		# Handle provider relation
+		for provider in self.cache[channel].get_providers():
+			self.relations[channel].append(
+				ProviderRelation(
+					self.cache[channel],
+					self.cache[provider],
+					self.cache
+				)
+			)
 	
 	def get_channel_blockers(self, channel):
 		"""
