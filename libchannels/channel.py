@@ -81,6 +81,8 @@ class Channel(configparser.ConfigParser):
 		Disables enitrely the channel.
 		"""
 		
+		print("Disabling %s channel..." % self.channel_name)
+		
 		for repository, source_entry in self.repositories.items():
 			source_entry.set_enabled(False)
 		
@@ -90,6 +92,8 @@ class Channel(configparser.ConfigParser):
 		"""
 		Enables the channel.
 		"""
+		
+		print("Enabling %s channel..." % self.channel_name)
 		
 		for repository, source_entry in self.repositories.items():
 			if type(source_entry) == SourceEntry:

@@ -48,4 +48,27 @@ class Actions:
 		Enables the given channel.
 		"""
 		
-		pass
+		if self.discovery.cache[channel].enabled:
+			# Nothing to do
+			return
+		
+		for child_channel, action in self.resolver.get_channel_solution(channel, ActionType.ENABLE):
+			if action == ActionType.ENABLE:
+				self.discovery.cache[child_channel].enable()
+			elif action == ActionType.DISABLE:
+				self.discovery.cache[child_channel].disable()
+	
+	def disable_channel(self, channel):
+		"""
+		Disables the given channel.
+		"""
+		
+		if not self.discovery.cache[channel].enabled:
+			# Nothing to do
+			return
+		
+		for child_channel, action in self.resolver.get_channel_solution(channel, ActionType.DISABLE):
+			if action == ActionType.ENABLE:
+				self.discovery.cache[child_channel].enable()
+			elif action == ActionType.DISABLE:
+				self.discovery.cache[child_channel].disable()
