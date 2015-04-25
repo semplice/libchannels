@@ -32,7 +32,6 @@ class Relation:
 		
 		self.target = target
 
-
 	def __eq__(self, other):
 		"""
 		Returns True if the dependencies are equal, False if not.
@@ -51,6 +50,13 @@ class Dependency(Relation):
 	The Dependency() relation handles a dependency between two channels.
 	"""
 	
+	def get_name(self):
+		"""
+		Returns the name of the target channel.
+		"""
+		
+		return self.target.channel_name
+		
 	def __bool__(self):
 		"""
 		Returns True if the dependency is statisfied, False if not.
@@ -63,6 +69,13 @@ class Conflict(Relation):
 	"""
 	The Conflict() relation handles a conflict between two channels.
 	"""
+	
+	def get_name(self):
+		"""
+		Returns the name of the target channel.
+		"""
+		
+		return self.target.channel_name
 	
 	def __bool__(self):
 		"""
@@ -86,19 +99,44 @@ class ProviderRelation(Relation):
 		self.requirer = requirer
 		self.target = target
 		self.channels = channels
+
+	def get_name(self):
+		"""
+		Returns the name of the target channel.
+		"""
+		
+		return self.target.provider_name
 	
+	def is_provider_enabled(self, channel):
+		"""
+		Returns True if the given channel provides the provider and is
+		enabled, False if not.
+		"""
+		
+		if (
+			not channel.endswith(".provider") and # Check on channels
+			not self.requirer.channel_name == channel and # Ensure we aren't checking ourselves
+			self.target.provider_name in self.channels[channel].get_providers() and # Actual provider check 
+			self.channels[channel].enabled # If the channel is not enabled, don't worry
+		):
+			return True
+		else:
+			return False
+		
+	def get_current_provider_channel(self):
+		"""
+		Returns the channel that currently provides the provider.
+		"""
+		
+		for channel in self.channels:
+			if self.is_provider_enabled(channel):
+				return channel
+		
+		return None
+
 	def __bool__(self):
 		"""
 		Returns True if the provider is not statisfied, False if it is.
 		"""
 		
-		return (not
-			(True in [
-				True for x in self.channels if (
-					not x.endswith(".provider") and # Check on channels
-					not self.requirer.channel_name == x and # Ensure we aren't checking ourselves
-					self.target.provider_name in self.channels[x].get_providers() and # Actual provider check 
-					self.channels[x].enabled # If the channel is not enabled, don't worry
-				)
-			])
-		)
+		return (not (True in [True for x in self.channels if self.is_provider_enabled(x)]))

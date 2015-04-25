@@ -19,6 +19,7 @@
 #
 
 from libchannels.relations import Dependency, Conflict, ProviderRelation
+from libchannels.actions import ActionType
 
 class DependencyResolver:
 	
@@ -73,14 +74,58 @@ class DependencyResolver:
 				)
 			)
 	
-	def get_channel_blockers(self, channel):
+	def get_channel_solution(self, channel, action=ActionType.ENABLE):
+		"""
+		Returns a list of key,value pairs containing the steps to
+		take to accomplish the given action, or None if nothing could
+		be done.
+		"""
+		
+		result = []
+
+		blockers = self.get_channel_blockers(channel, action=action)
+		
+		for blocker in blockers:
+			if type(blocker) == Dependency:
+				# Get solution for the given dependency
+				solutions = self.get_channel_solution(blocker.get_name(), ActionType.ENABLE)
+			if type(blocker) == Conflict:
+				# Get solution for the given conflict
+				solutions = self.get_channel_solution(blocker.get_name(), ActionType.DISABLE)
+			elif type(blocker) == ProviderRelation:
+				# Get solution for the given provider relation
+				solutions = self.get_channel_solution(blocker.get_current_provider_channel(), ActionType.DISABLE)
+		
+			if solutions != None:
+				result += [solution for solution in solutions if not solution in result]
+			else:
+				# Nothing to do
+				return None		
+		
+		# Finally add actual action
+		result.append((channel, action))
+		
+		return result
+	
+	def get_channel_blockers(self, channel, action=ActionType.ENABLE):
 		"""
 		Returns a list of relations to statisfy before the given channel
 		can be marked as "enableable".
 		"""
 		
-		return [relation for relation in self.relations[channel] if not relation]
+		if action == ActionType.ENABLE:
+			return [relation for relation in self.relations[channel] if not relation]
+		elif action == ActionType.DISABLE:
+			compare_relation = Dependency(self.cache[channel])
 			
+			# Simply build a list of Conflicts for the channels which depend
+			# on the one we want to remove
+			return [
+				Conflict(self.cache[name])
+				for name, relations in self.relations.items()
+				if compare_relation in relations and self.cache[name].enabled
+			]
+	
 	def is_channel_enableable(self, channel):
 		"""
 		Returns True it the channel can be enabled, False if not.
