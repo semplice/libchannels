@@ -4,13 +4,13 @@ description = Semplice developer updates channel
 depends = semplice-current
 
 [main]
-default_mirror = http://archive.semplice-linux.org/semplice/
+default_mirror = http://archive.semplice-linux.org/semplice/archive/
 origin = Semplice Project
 codename = devel
 components = main contrib non-free
 
 [changes]
-default_mirror = http://archive.semplice-linux.org/semplice/
+default_mirror = http://archive.semplice-linux.org/semplice/archive/
 origin = Semplice Project
 codename = changes-devel-unstable
 components = main contrib non-free

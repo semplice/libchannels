@@ -5,13 +5,13 @@ depends = sid
 provides = semplice-base.provider
 
 [main]
-default_mirror = http://archive.semplice-linux.org/semplice/
+default_mirror = http://archive.semplice-linux.org/semplice/archive/
 origin = Semplice Project
 codename = unstable
 components = main contrib non-free
 
 [changes]
-default_mirror = http://archive.semplice-linux.org/semplice/
+default_mirror = http://archive.semplice-linux.org/semplice/archive/
 origin = Semplice Project
 codename = changes-unstable
 components = main contrib non-free
