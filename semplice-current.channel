@@ -15,3 +15,10 @@ default_mirror = http://archive.semplice-linux.org/semplice/archive/
 origin = Semplice Project
 codename = changes-unstable
 components = main contrib non-free
+
+[proposed]
+default_mirror = http://archive.semplice-linux.org/semplice/archive/
+origin = Semplice Project
+codename = proposed-unstable
+components = main contrib non-free
+proposed = yes

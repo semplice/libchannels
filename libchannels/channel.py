@@ -84,7 +84,7 @@ class Channel(configparser.ConfigParser):
 		print("Disabling %s channel..." % self.channel_name)
 		
 		for repository, source_entry in self.repositories.items():
-			source_entry.set_enabled(False)
+			if source_entry: source_entry.set_enabled(False)
 		
 		libchannels.common.sourceslist.save()
 	
@@ -96,6 +96,10 @@ class Channel(configparser.ConfigParser):
 		print("Enabling %s channel..." % self.channel_name)
 		
 		for repository, source_entry in self.repositories.items():
+			if self.is_proposed(repository):
+				# Proposed components should be enabled manually
+				continue
+			
 			if type(source_entry) == SourceEntry:
 				source_entry.set_enabled(True)
 			else:
@@ -167,15 +171,31 @@ class Channel(configparser.ConfigParser):
 			# Good!
 			self.repositories[repository] = source_entry
 	
-	def is_sourceentry_enabled(self, repository):
+	def is_proposed(self, name):
+		"""
+		Returns True if the repository name is proposed, False if not.
+		"""
+		
+		return (
+			"proposed" in self[name] and
+			self[name].getboolean("proposed")
+		)
+	
+	def is_sourceentry_enabled(self, name, repository, skip_proposed=False):
 		"""
 		Returns True if the sourceentry is enabled, False if not.
 		"""
 				
 		return (
-			type(repository) == SourceEntry and
-			not repository.disabled
-		) 
+			(
+				type(repository) == SourceEntry and
+				not repository.disabled
+			) or
+			(
+				skip_proposed and
+				self.is_proposed(name)
+			)
+		)
 	
 	@property
 	def enabled(self):
@@ -184,4 +204,4 @@ class Channel(configparser.ConfigParser):
 		"""
 		
 		#return (not (None in self.repositories.values()))
-		return (not (False in [self.is_sourceentry_enabled(x) for x in self.repositories.values()]))
+		return (not (False in [self.is_sourceentry_enabled(x, y, skip_proposed=True) for x, y in self.repositories.items()]))

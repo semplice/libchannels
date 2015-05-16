@@ -28,6 +28,8 @@ else:
 print("semplice-current", not (False in resolver.relations["semplice-current"]))
 print(resolver.is_channel_enableable("semplice-jessie"))
 
+print("semplice-current enabled: %s" % discovery.cache["semplice-current"].enabled)
+
 # Print blockers for some channels
 for channel in ["semplice-current", "semplice-jessie"]:
 	print("%s blockers: %s" % (channel, resolver.get_channel_blockers(channel)))
