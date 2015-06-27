@@ -18,9 +18,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
+import os
 import configparser
 
 import libchannels.common
+import libchannels.config
 
 from aptsources.sourceslist import SourceEntry
 
@@ -67,7 +69,7 @@ class Channel(configparser.ConfigParser):
 		
 		self.channel_name = channel_name
 		
-		self.read("./%s.channel" % channel_name) # FIXME: Should properly retrieve the path!
+		self.read(os.path.join(libchannels.config.CHANNEL_SEARCH_PATH, "%s.channel" % channel_name))
 		
 		# Build repository dictionary
 		for repository in self.sections():
