@@ -18,9 +18,11 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
+import os
 import configparser
 
 import libchannels.common
+import libchannels.config
 
 class Provider(configparser.ConfigParser):
 	
@@ -65,7 +67,7 @@ class Provider(configparser.ConfigParser):
 		
 		self.provider_name = provider_name
 		
-		self.read("./%s.provider" % provider_name) # FIXME: Should properly retrieve the path!
+		self.read(os.path.join(libchannels.config.CHANNEL_SEARCH_PATH, "%s.provider" % provider_name))
 	
 	def __str__(self):
 		"""
