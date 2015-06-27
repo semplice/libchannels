@@ -18,4 +18,4 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-CHANNEL_SEARCH_PATH = "./"
+CHANNEL_SEARCH_PATH = "/home/g7/semplice/channels/libchannels/libchannels"
