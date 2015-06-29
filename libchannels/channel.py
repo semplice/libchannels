@@ -78,6 +78,21 @@ class Channel(configparser.ConfigParser):
 			
 			self.repositories[repository] = None # check() will eventually change that to the appropriate SourceEntry
 	
+	def disable_component(self, name, save=True):
+		"""
+		Disables a component.
+		"""
+		
+		print("Disabling component %s..." % name)
+		
+		source_entry = self.repositories[name]
+		
+		if source_entry:
+			source_entry.set_enabled(False)
+		
+		if save:
+			libchannels.common.sourceslist.save()
+
 	def disable(self):
 		"""
 		Disables enitrely the channel.
@@ -85,10 +100,35 @@ class Channel(configparser.ConfigParser):
 		
 		print("Disabling %s channel..." % self.channel_name)
 		
-		for repository, source_entry in self.repositories.items():
-			if source_entry: source_entry.set_enabled(False)
+		for repository in self.repositories:
+			self.disable_component(repository, save=False)
 		
 		libchannels.common.sourceslist.save()
+	
+	def enable_component(self, name, save=True):
+		"""
+		Enables a component.
+		"""
+		
+		print("Enabling component %s..." % name)
+		
+		source_entry = self.repositories[name]
+		
+		if type(source_entry) == SourceEntry:
+			source_entry.set_enabled(True)
+		else:
+			# Manually add the entry
+			self.repositories[repository] = libchannels.common.sourceslist.add(
+				"deb",
+				self[repository]["default_mirror"],
+				self[repository]["codename"],
+				self[repository]["components"].split(" "), # FIXME
+				comment=repository,
+				file="/etc/apt/sources.list.d/%s.list" % self.channel_name
+			)
+		
+		if save:
+			libchannels.common.sourceslist.save()
 	
 	def enable(self):
 		"""
@@ -97,26 +137,15 @@ class Channel(configparser.ConfigParser):
 		
 		print("Enabling %s channel..." % self.channel_name)
 		
-		for repository, source_entry in self.repositories.items():
+		for repository in self.repositories:
 			if self.is_proposed(repository):
 				# Proposed components should be enabled manually
 				continue
 			
-			if type(source_entry) == SourceEntry:
-				source_entry.set_enabled(True)
-			else:
-				# Manually add the entry
-				self.repositories[repository] = libchannels.common.sourceslist.add(
-					"deb",
-					self[repository]["default_mirror"],
-					self[repository]["codename"],
-					self[repository]["components"].split(" "), # FIXME
-					comment=repository,
-					file="/etc/apt/sources.list.d/%s.list" % self.channel_name
-				)
+			self.enable_component(repository, save=False)
 		
 		libchannels.common.sourceslist.save()
-	
+
 	def get_dependencies(self):
 		"""
 		Returns a list of the channel's dependencies.
@@ -204,7 +233,7 @@ class Channel(configparser.ConfigParser):
 		Like is_sourceentry_enabled(), with automatic repository lookup.
 		"""
 		
-		return self.is_sourceentry_enabled(name, self.repositories[name], skip_proposed=False) else None
+		return self.is_sourceentry_enabled(name, self.repositories[name], skip_proposed=False) if name in self.repositories else None
 	
 	@property
 	def enabled(self):
