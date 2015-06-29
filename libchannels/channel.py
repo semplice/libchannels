@@ -199,6 +199,13 @@ class Channel(configparser.ConfigParser):
 			)
 		)
 	
+	def is_component_enabled(self, name):
+		"""
+		Like is_sourceentry_enabled(), with automatic repository lookup.
+		"""
+		
+		return self.is_sourceentry_enabled(name, self.repositories[name], skip_proposed=False) else None
+	
 	@property
 	def enabled(self):
 		"""
