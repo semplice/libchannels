@@ -235,6 +235,13 @@ class Channel(configparser.ConfigParser):
 		
 		return self.is_sourceentry_enabled(name, self.repositories[name], skip_proposed=False) if name in self.repositories else None
 	
+	def has_component(self, name):
+		"""
+		Returns True if the component name is available, False if not.
+		"""
+		
+		return (name in self) if not name == "channel" else False
+	
 	@property
 	def enabled(self):
 		"""
