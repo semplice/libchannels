@@ -118,12 +118,12 @@ class Channel(configparser.ConfigParser):
 			source_entry.set_enabled(True)
 		else:
 			# Manually add the entry
-			self.repositories[repository] = libchannels.common.sourceslist.add(
+			self.repositories[name] = libchannels.common.sourceslist.add(
 				"deb",
-				self[repository]["default_mirror"],
-				self[repository]["codename"],
-				self[repository]["components"].split(" "), # FIXME
-				comment=repository,
+				self[name]["default_mirror"],
+				self[name]["codename"],
+				self[name]["components"].split(" "), # FIXME
+				comment=name,
 				file="/etc/apt/sources.list.d/%s.list" % self.channel_name
 			)
 		
