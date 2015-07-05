@@ -18,4 +18,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-CHANNEL_SEARCH_PATH = "/home/g7/semplice/channels/libchannels/libchannels"
+import os
+
+CHANNEL_SEARCH_PATH = os.environ["CHANNEL_SEARCH_PATH"] if "CHANNEL_SEARCH_PATH" in os.environ else "/etc/channels.d"
