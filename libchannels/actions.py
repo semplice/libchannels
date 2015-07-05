@@ -58,6 +58,17 @@ class Actions:
 			elif action == ActionType.DISABLE:
 				self.discovery.cache[child_channel].disable()
 	
+	def enable_component(self, channel, component):
+		"""
+		Enables the component of the given channel.
+		"""
+		
+		if self.discovery.cache[channel].is_component_enabled(component):
+			# Nothing to do
+			return
+		
+		return self.discovery.cache[channel].enable_component(component)
+	
 	def disable_channel(self, channel):
 		"""
 		Disables the given channel.
@@ -72,3 +83,20 @@ class Actions:
 				self.discovery.cache[child_channel].enable()
 			elif action == ActionType.DISABLE:
 				self.discovery.cache[child_channel].disable()
+	
+	def disable_component(self, channel, component):
+		"""
+		Disables the componentof the given channel.
+		
+		Note: only proposed components can be disabled. Use the lower level
+		methods in Channel() to disable non-proposed components (you shouldn't).
+		"""
+		
+		if not self.discovery.cache[channel].is_component_enabled(component):
+			# Nothing to do
+			return
+		elif not self.discovery.cache[channel].is_proposed(component):
+			# Non-proposed methods can't be disabled
+			raise Exception("The component is not proposed and thus can't be disabled.")
+		
+		return self.discovery.cache[channel].disable_component(component)
