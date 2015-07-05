@@ -240,7 +240,7 @@ class Channel(configparser.ConfigParser):
 		Returns True if the component name is available, False if not.
 		"""
 		
-		return (name in self) if not name == "channel" else False
+		return (name in self.sections()) if not name == "channel" else False
 	
 	@property
 	def enabled(self):
