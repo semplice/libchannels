@@ -1,0 +1,20 @@
+Source: python3-libchannels
+Section: python
+Priority: optional
+Maintainer: Eugenio Paolantonio (g7) <me@medesimo.eu>
+Build-Depends: dh-python, python3-all (>= 3.1.2-7~), debhelper (>= 8.0.0)
+X-Python3-Version: >= 3.4
+Standards-Version: 3.9.5
+Homepage: https://github.com/semplice/libchannels
+Vcs-Git: git://github.com/semplice/libchannels.git
+Vcs-Browser: https://github.com/semplice/libchannels
+
+Package: python3-libchannels
+Architecture: all
+Depends: ${misc:Depends}, ${python3:Depends}, python3-apt
+Breaks: ${python3:Breaks}
+Description: Channel support -- library
+ channels is a tool that permits to easily manage update channels on
+ Semplice.
+ .
+ This package contains the main library.
