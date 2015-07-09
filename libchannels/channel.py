@@ -196,8 +196,8 @@ class Channel(configparser.ConfigParser):
 			if codename != self[repository]["codename"]:
 				continue
 			
-			#if label != self[repository]["label"]:
-			#	continue
+			if "label" in self[repository] and label != self[repository]["label"]:
+				continue
 			
 			# Good!
 			self.repositories[repository] = source_entry
