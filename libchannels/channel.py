@@ -174,12 +174,17 @@ class Channel(configparser.ConfigParser):
 		
 		return self["channel"]["name"]
 	
-	def check(self, uri, origin, label, codename, source_entry):
+	def check(self, uri, origin, label, codenames, source_entry):
 		"""
 		Sets the given SourceEntry into self.repositories if it matches
 		the other information given.
 		"""
-				
+		
+		# Do not fail if the caller expects that 'codenames' is a string
+		# (libchannels 0.1.1 and below)
+		if type(codenames) == str:
+			codenames = [codenames]
+		
 		for repository in self.repositories:
 			
 			#print(self["channel"]["name"], origin, codename, source_entry)
@@ -192,8 +197,8 @@ class Channel(configparser.ConfigParser):
 				) == uri)
 			):
 				continue
-				
-			if codename != self[repository]["codename"]:
+			
+			if not self[repository]["codename"] in codenames:
 				continue
 			
 			if "label" in self[repository] and label != self[repository]["label"]:
