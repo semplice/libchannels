@@ -72,7 +72,7 @@ class ChannelDiscovery:
 			while release_base.count("") > 0:
 				release_base.remove("")
 			# Add other informations
-			release_base += ["dists", repository.dist.replace("/","")]
+			release_base += ["dists", repository.dist.replace("/","_")]
 			# Remove protocol
 			release_base.pop(0)
 			
