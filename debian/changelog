@@ -1,3 +1,9 @@
+python3-libchannels (0.1.4-1) unstable; urgency=medium
+
+  * [channel, discovery] Handle also deb-src source entries.
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Sat, 18 Jul 2015 15:25:03 +0200
+
 python3-libchannels (0.1.3-1) unstable; urgency=medium
 
   * [discovery] / should be replaced with _

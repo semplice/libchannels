@@ -22,7 +22,7 @@
 from distutils.core import setup
 
 setup(name='libchannels',
-	version='0.1.3',
+	version='0.1.4',
 	description='Update channels management library',
 	author='Eugenio Paolantonio',
 	author_email='me@medesimo.eu',
