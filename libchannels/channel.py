@@ -66,6 +66,7 @@ class Channel(configparser.ConfigParser):
 		super().__init__()
 		
 		self.repositories = {}
+		self.sources = {}
 		
 		self.channel_name = channel_name
 		
@@ -77,6 +78,7 @@ class Channel(configparser.ConfigParser):
 				continue
 			
 			self.repositories[repository] = None # check() will eventually change that to the appropriate SourceEntry
+			self.sources[repository] = None # like above
 	
 	def disable_component(self, name, save=True):
 		"""
@@ -86,9 +88,12 @@ class Channel(configparser.ConfigParser):
 		print("Disabling component %s..." % name)
 		
 		source_entry = self.repositories[name]
+		source_source = self.sources[name]
 		
 		if source_entry:
 			source_entry.set_enabled(False)
+		if source_source:
+			source_source.set_enabled(False)
 		
 		if save:
 			libchannels.common.sourceslist.save()
@@ -113,6 +118,7 @@ class Channel(configparser.ConfigParser):
 		print("Enabling component %s..." % name)
 		
 		source_entry = self.repositories[name]
+		source_source = self.sources[name]
 		
 		if type(source_entry) == SourceEntry:
 			source_entry.set_enabled(True)
@@ -126,6 +132,10 @@ class Channel(configparser.ConfigParser):
 				comment=name,
 				file="/etc/apt/sources.list.d/%s.list" % self.channel_name
 			)
+		
+		# FIXME: Should offer the possibility to create a new deb-src entry.
+		if type(source_source) == SourceEntry:
+			source_source.set_enabled(True)
 		
 		if save:
 			libchannels.common.sourceslist.save()
@@ -205,8 +215,11 @@ class Channel(configparser.ConfigParser):
 				continue
 			
 			# Good!
-			self.repositories[repository] = source_entry
-	
+			if source_entry.type == "deb":
+				self.repositories[repository] = source_entry
+			elif source_entry.type == "deb-src":
+				self.sources[repository] = source_entry
+		
 	def is_proposed(self, name):
 		"""
 		Returns True if the repository name is proposed, False if not.

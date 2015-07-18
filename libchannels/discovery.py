@@ -63,7 +63,7 @@ class ChannelDiscovery:
 				
 		# Loop through enabled repositories to get a list of enabled channels
 		for repository in libchannels.common.sourceslist:
-			if repository.uri == "" or repository.type == "deb-src":
+			if repository.uri == "":
 				continue
 			
 			# Generate InRelease filename from repository URI
