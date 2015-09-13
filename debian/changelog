@@ -1,3 +1,9 @@
+python3-libchannels (0.1.5-1) unstable; urgency=medium
+
+  * [channel] Do not check for label if it's currently unavailable.
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Sun, 13 Sep 2015 11:41:48 +0200
+
 python3-libchannels (0.1.4-1) unstable; urgency=medium
 
   * [channel, discovery] Handle also deb-src source entries.
