@@ -1,3 +1,9 @@
+python3-libchannels (0.1.6-1) unstable; urgency=medium
+
+  * [channel] I'm a fucking moron.
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Mon, 14 Sep 2015 18:27:04 +0200
+
 python3-libchannels (0.1.5-1) unstable; urgency=medium
 
   * [channel] Do not check for label if it's currently unavailable.
