@@ -211,7 +211,7 @@ class Channel(configparser.ConfigParser):
 			if not self[repository]["codename"] in codenames:
 				continue
 			
-			if label && ("label" in self[repository] and label != self[repository]["label"]):
+			if label and ("label" in self[repository] and label != self[repository]["label"]):
 				continue
 			
 			# Good!
