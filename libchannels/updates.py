@@ -21,7 +21,11 @@
 import apt
 import apt_pkg
 
+import logging
+
 from apt_pkg import size_to_str
+
+logger = logging.getLogger(__name__)
 
 class Updates:
 	
@@ -51,8 +55,6 @@ class Updates:
 		self.packages_install_progress = None
 		self.packages_install_failure_callback = None
 		
-		self.acquire_object = None
-		
 		self.id_with_packages = {}
 		
 		self.now_kept = []
@@ -66,14 +68,6 @@ class Updates:
 			self.cache = apt.Cache(progress=self.cache_progress)
 		else:
 			self.cache.open(progress=self.cache_progress)
-	
-	def create_acquire_object(self):
-		"""
-		Creates an acquire object to be used to download packages.
-		"""
-		
-		# FIXME: should check?
-		self.acquire_object = apt_pkg.Acquire(progress=self.packages_acquire_progress)
 	
 	def clear(self):
 		"""
@@ -134,16 +128,18 @@ class Updates:
 		Fetches the updates.
 		"""
 		
-		if not self.acquire_object or not self.cache:
+		if not self.cache:
 			return False
+		
+		acquire_object = apt_pkg.Acquire(progress=self.packages_acquire_progress)
 		
 		try:
 			if not package_manager:
-				self.cache.fetch_archives(fetcher=self.acquire_object)
+				self.cache.fetch_archives(fetcher=acquire_object)
 			else:
 				# Handle internally
-				self.cache._fetch_archives(self.acquire_object, package_manager)
-			self.acquire_object.shutdown()
+				self.cache._fetch_archives(acquire_object, package_manager)
+			acquire_object.shutdown()
 		except:
 			return False
 		
@@ -154,7 +150,7 @@ class Updates:
 		Installs the updates.
 		"""
 		
-		if not self.acquire_object or not self.cache:
+		if not self.cache:
 			return False
 		
 		package_manager = apt_pkg.PackageManager(self.cache._depcache)
@@ -182,7 +178,17 @@ class Updates:
 			#res = package_manager.do_install()
 						
 			if res in (package_manager.RESULT_INCOMPLETE, package_manager.RESULT_FAILED):
-				print("INCOMPLETE" if res == package_manager.RESULT_INCOMPLETE else "FAILED")
+				logger.warning("System update %s, trying again (%s/%s)" %
+					(
+						"incomplete"
+						if res == package_manager.RESULT_INCOMPLETE
+						else "failed",
+						
+						tries+1,
+						
+						self.MAX_TRIES
+					)
+				)
 				# Dpkg journal dirty?
 				if self.cache.dpkg_journal_dirty:
 					subprocess.call(["dpkg", "configure", "--all"])
@@ -203,19 +209,21 @@ class Updates:
 					self.restore_working_state()
 			elif res == package_manager.RESULT_COMPLETED:
 				# Everything completed successfully
+				logger.info("System update completed")
 				self.packages_install_progress.finish_update()
 				return
 			else:
 				# Unknown error.
+				logger.error("Unknown error: %s" % res)
 				self.packages_install_failure_callback("Unknown error: %s" % res)
 				return
-
 				
 			tries += 1
 		
 		# If we are here, the installation process failed and we were
 		# unable to continue.
-		self.packages_install_failure_callback("Unable to complete the upgrade: MAX_TRIES reached")
+		logger.error("System upgrade failed: MAX_TRIES reached")
+		self.packages_install_failure_callback("System upgrade failed: MAX_TRIES reached")
 	
 	def get_reason(self, pkg):
 		"""
