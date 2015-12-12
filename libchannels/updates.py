@@ -209,8 +209,8 @@ class Updates:
 					self.restore_working_state()
 			elif res == package_manager.RESULT_COMPLETED:
 				# Everything completed successfully
-				logger.info("Reloading cache")
-				self.open_cache(progress=None)
+				logger.info("Clearing cache")
+				self.clear()
 				
 				logger.info("System update completed")
 				self.packages_install_progress.finish_update()
