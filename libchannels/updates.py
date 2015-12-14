@@ -97,9 +97,9 @@ class Updates:
 		
 		return self.cache.required_download, self.cache.required_space
 	
-	@libchannels.common.lock(
-		"lock_failure_callback"
-	)
+#	@libchannels.common.lock(
+#		"lock_failure_callback"
+#	)
 	def update(self):
 		"""
 		Updates the package cache.
@@ -131,9 +131,6 @@ class Updates:
 		
 		return True
 	
-	@libchannels.common.lock(
-		"lock_failure_callback"
-	)
 	def fetch(self, package_manager=None):
 		"""
 		Fetches the updates.
@@ -142,6 +139,7 @@ class Updates:
 		if not self.cache:
 			return False
 		
+		logger.info("Beginning fetch")
 		acquire_object = apt_pkg.Acquire(progress=self.packages_acquire_progress)
 		
 		try:
@@ -151,14 +149,12 @@ class Updates:
 				# Handle internally
 				self.cache._fetch_archives(acquire_object, package_manager)
 			acquire_object.shutdown()
-		except:
+		except Exception as e:
+			logger.error("Unable to fetch: %s" % e)
 			return False
 		
 		return True
 	
-	@libchannels.common.lock(
-		"lock_failure_callback"
-	)
 	def install(self):
 		"""
 		Installs the updates.
