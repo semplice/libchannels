@@ -97,9 +97,6 @@ class Updates:
 		
 		return self.cache.required_download, self.cache.required_space
 	
-#	@libchannels.common.lock(
-#		"lock_failure_callback"
-#	)
 	def update(self):
 		"""
 		Updates the package cache.
