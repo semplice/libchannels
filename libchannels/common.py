@@ -49,9 +49,9 @@ def lock(
 			try:
 				with apt_pkg.SystemLock():
 					return obj(self, *args, **kwargs)
-			except SystemError:
+			except SystemError as e:
 				# Lock failed
-				logger.error("Unable to create a SystemLock")
+				logger.error("Unable to create a SystemLock: %s" % e)
 				
 				# A bit convoluted here, but we should test for both
 				# the existence of lock_failed_callback and of the callback
