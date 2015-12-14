@@ -23,6 +23,8 @@ import apt_pkg
 
 import logging
 
+import libchannels.common
+
 from apt_pkg import size_to_str
 
 logger = logging.getLogger(__name__)
@@ -46,6 +48,9 @@ class Updates:
 		# True if the last call on mark_for_upgrade was in dist-upgrade mode.
 		# This is used by restore_working_state()
 		self.last_is_dist_upgrade = False
+		
+		self.lock = apt_pkg.SystemLock()
+		self.lock_failure_callback = None
 		
 		self.cache = None
 		
@@ -92,6 +97,9 @@ class Updates:
 		
 		return self.cache.required_download, self.cache.required_space
 	
+	@libchannels.common.lock(
+		"lock_failure_callback"
+	)
 	def update(self):
 		"""
 		Updates the package cache.
@@ -123,6 +131,9 @@ class Updates:
 		
 		return True
 	
+	@libchannels.common.lock(
+		"lock_failure_callback"
+	)
 	def fetch(self, package_manager=None):
 		"""
 		Fetches the updates.
@@ -145,6 +156,9 @@ class Updates:
 		
 		return True
 	
+	@libchannels.common.lock(
+		"lock_failure_callback"
+	)
 	def install(self):
 		"""
 		Installs the updates.
