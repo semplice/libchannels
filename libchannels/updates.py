@@ -52,6 +52,8 @@ class Updates:
 		self.lock = apt_pkg.SystemLock()
 		self.lock_failure_callback = None
 		
+		self.generic_failure_callback = None
+		
 		self.cache = None
 		
 		self.cache_progress = None
@@ -63,6 +65,20 @@ class Updates:
 		self.id_with_packages = {}
 		
 		self.now_kept = []
+	
+	def notify_error(self, error, description="", callback=None):
+		"""
+		Notifies an error, by logging it and firing a specified callback.
+		
+		If callback is None, it will assume self.generic_failure_callback.
+		"""
+		
+		logger.error(error)
+		if description:
+			logger.error("Description was: %s" % description)
+		
+		if callback or self.generic_failure_callback:
+			(callback if callback else self.generic_failure_callback)(error, str(description))
 	
 	def open_cache(self, progress=None):
 		"""
@@ -123,7 +139,8 @@ class Updates:
 			
 			self.changed = True
 			self.last_is_dist_upgrade = dist_upgrade
-		except SystemError:
+		except Exception as err:
+			self.notify_error("Unable to mark the packages for dist-upgrade", err)
 			return False
 		
 		return True
@@ -146,8 +163,8 @@ class Updates:
 				# Handle internally
 				self.cache._fetch_archives(acquire_object, package_manager)
 			acquire_object.shutdown()
-		except Exception as e:
-			logger.error("Unable to fetch: %s" % e)
+		except Exception as err:
+			self.notify_error("Unable to fetch the packages", err)
 			return False
 		
 		return True
