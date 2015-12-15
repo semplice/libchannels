@@ -1,3 +1,21 @@
+python3-libchannels (0.70.0-1) unstable; urgency=medium
+
+  * [channel] Do not check for label if it's currently unavailable.
+  * [channel] I'm a fucking moron.
+  * [updates] Preliminary updates support.
+  * [updates] Implement basic logging support (relies upon parent's logging configuration); Always create a new acquire_object.
+  * [updates] Reload cache when the system update has been completed
+  * [updates] Clear cache instead of reloading it
+  * [common] Implement a new function decorator that will lock the APT database
+  * [updates] Decorate with common.lock update(), fetch() and install()
+  * [common] lock(): log the failure message
+  * [updates] Do not lock install(), fetch() and refresh(), as apt will do that for ourselves. Also, moar log messages
+  * [updates] Remove the previously commented lock call
+  * [updates] Added a generic error notification routine, that logs the error and fires a callback
+  * [setup] Updated dependencies
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Tue, 15 Dec 2015 18:09:10 +0100
+
 python3-libchannels (0.1.4-1) unstable; urgency=medium
 
   * [channel, discovery] Handle also deb-src source entries.
