@@ -163,6 +163,10 @@ class Updates:
 				# Handle internally
 				self.cache._fetch_archives(acquire_object, package_manager)
 			acquire_object.shutdown()
+		except apt.cache.FetchCancelledException:
+			# Cancelled
+			logger.info("Fetch cancelled")
+			return False
 		except Exception as err:
 			self.notify_error("Unable to fetch the packages", err)
 			return False
@@ -195,7 +199,8 @@ class Updates:
 		tries = 0
 		while tries < self.MAX_TRIES:
 			# Run the fetch operation again, just to be sure
-			self.fetch(package_manager)
+			if not self.fetch(package_manager):
+				return
 			
 			# Then run the actual installation process
 			res = self.packages_install_progress.run(package_manager)
