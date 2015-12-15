@@ -29,7 +29,7 @@ setup(name='libchannels',
 	url='https://github.com/semplice/libchannels',
 	packages=[
 		"libchannels"
-      ],
-	requires=['sys', 'enum', 'os', 'configparser', 'aptsources.sourceslist']
+        ],
+	requires=['sys', 'enum', 'os', 'configparser', 'aptsources.sourceslist', 'apt', 'apt_pkg', 'logging']
 )
 
