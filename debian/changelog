@@ -1,3 +1,9 @@
+python3-libchannels (0.70.2-1) unstable; urgency=medium
+
+  * [updates] Clear the cache if there were issues in marking the packages for upgrade
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Thu, 17 Dec 2015 13:38:16 +0100
+
 python3-libchannels (0.70.1-1) unstable; urgency=medium
 
   * [updates] Do not notify_error() if the fetch process has been cancelled.
