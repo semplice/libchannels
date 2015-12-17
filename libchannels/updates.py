@@ -140,6 +140,7 @@ class Updates:
 			self.changed = True
 			self.last_is_dist_upgrade = dist_upgrade
 		except Exception as err:
+			self.clear()
 			self.notify_error("Unable to mark the packages for dist-upgrade", err)
 			return False
 		
