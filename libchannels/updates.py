@@ -29,6 +29,12 @@ from apt_pkg import size_to_str
 
 logger = logging.getLogger(__name__)
 
+# APT Configuration
+
+# FIXME: should make this interactive
+apt_pkg.config.set("DPkg::Options::", "--force-confdef")
+apt_pkg.config.set("DPkg::Options::", "--force-confold")
+
 class Updates:
 	
 	"""
