@@ -209,6 +209,8 @@ class Updates:
 			if not self.fetch(package_manager):
 				return
 			
+			logger.debug("Starting the update run")
+			
 			# Then run the actual installation process
 			res = self.packages_install_progress.run(package_manager)
 			#res = package_manager.do_install()
@@ -227,6 +229,7 @@ class Updates:
 				)
 				# Dpkg journal dirty?
 				if self.cache.dpkg_journal_dirty:
+					logger.debug("Dirty journal, fixing...")
 					subprocess.call(["dpkg", "configure", "--all"])
 				
 				# FIXME: add check for core packages
@@ -234,6 +237,7 @@ class Updates:
 				# Broken packages?
 				#if self.cache._depcache.broken_count > 0:
 				if True:
+					logger.debug("Broken packages, fixing...")
 					fixer = apt_pkg.ProblemResolver(self.cache._depcache)
 					fixer.resolve(True)
 					
