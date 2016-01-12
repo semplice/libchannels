@@ -238,6 +238,8 @@ class Updates:
 				#if self.cache._depcache.broken_count > 0:
 				if True:
 					logger.debug("Broken packages, fixing...")
+					self.cache.clear()
+					self.open_cache()
 					fixer = apt_pkg.ProblemResolver(self.cache._depcache)
 					fixer.resolve(True)
 					
