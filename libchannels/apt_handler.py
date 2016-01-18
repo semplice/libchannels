@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 apt_pkg.config.set("DPkg::Options::", "--force-confdef")
 apt_pkg.config.set("DPkg::Options::", "--force-confold")
 
-class Updates:
+class APT:
 	
 	"""
 	Same-release distribution updates management.
