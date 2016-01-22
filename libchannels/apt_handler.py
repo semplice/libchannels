@@ -117,7 +117,11 @@ class APT:
 		if not self.cache:
 			return 0, 0
 		
-		return self.cache.required_download, self.cache.required_space
+		try:
+			return self.cache.required_download, self.cache.required_space
+		except SystemError as err:
+			self.notify_error("An error occurred", err)
+			return 0, 0
 	
 	def update(self):
 		"""
