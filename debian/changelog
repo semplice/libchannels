@@ -1,3 +1,9 @@
+python3-libchannels (0.70.3-1) unstable; urgency=medium
+
+  * [updates] Enforce uninteractive conffile policy
+
+ -- Eugenio Paolantonio (g7) <me@medesimo.eu>  Tue, 02 Feb 2016 18:20:52 +0100
+
 python3-libchannels (0.70.2-1) unstable; urgency=medium
 
   * [updates] Clear the cache if there were issues in marking the packages for upgrade
