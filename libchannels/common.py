@@ -18,15 +18,26 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
+import os
+
 import logging
 
 import apt_pkg
 import aptsources.sourceslist
 
+import libchannels.apt_handler
+import libchannels.apt_cache
+
 logger = logging.getLogger(__name__)
 
 # Sourceslist
 sourceslist = aptsources.sourceslist.SourcesList()
+
+# APT cache
+cache_object = libchannels.apt_cache.DynamicCache()
+
+# APT handler
+handler_object = libchannels.apt_handler.APT(cache_object)
 
 def lock(
 	lock_failed_callback=None

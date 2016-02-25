@@ -23,8 +23,6 @@ import apt_pkg
 
 import logging
 
-import libchannels.common
-
 from apt_pkg import size_to_str
 
 logger = logging.getLogger(__name__)
@@ -43,7 +41,7 @@ class APT:
 	
 	MAX_TRIES = 5
 	
-	def __init__(self):
+	def __init__(self, cache):
 		"""
 		Initializes the class.
 		"""
@@ -59,8 +57,8 @@ class APT:
 		self.lock_failure_callback = None
 		
 		self.generic_failure_callback = None
-		
-		self.cache = None
+
+		self.cache = cache
 		
 		self.cache_progress = None
 		self.cache_acquire_progress = None
@@ -91,10 +89,7 @@ class APT:
 		Opens/Creates the cache.
 		"""
 		
-		if not self.cache:
-			self.cache = apt.Cache(progress=self.cache_progress)
-		else:
-			self.cache.open(progress=self.cache_progress)
+		return self.cache.open_cache(progress if progress else self.cache_progress)
 	
 	def clear(self):
 		"""
@@ -102,7 +97,7 @@ class APT:
 		"""
 		
 		if self.cache:
-			self.cache = None
+			self.cache.clear()
 		
 		self.changed = False
 		
