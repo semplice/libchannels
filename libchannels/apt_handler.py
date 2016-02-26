@@ -117,7 +117,50 @@ class APT:
 		except SystemError as err:
 			self.notify_error("An error occurred", err)
 			return 0, 0
-	
+
+	def check_relationship(self, relationship):
+		"""
+		Checks a single relationship.
+
+		Returns True if it does, False if not.
+
+		`relationship` is a single relationship.
+		"""
+
+		for package_name, relationship_version, operator in relationship:
+			if package_name in self.cache:
+				package = self.cache[package_name]
+				if package.is_installed:
+					version = package.installed
+				elif package.marked_install or package.marked_upgrade or package.marked_downgrade:
+					# FIXME: this assumption may not be always correct
+					version = package.candidate
+
+				if apt_pkg.check_dep(version.version, operator, relationship_version):
+					return True
+
+		return False
+
+	def check_relationships(self, relationships):
+		"""
+		Checks if the current APT state satisfies the given relationships.
+
+		Returns True if it does, False if not.
+
+		`relationships` is a relationship list as returned by `apt_pkg.parse_src_depends()`.
+		"""
+
+		# Example relationship list:
+		# [[('abiword', '5.0', '>='), ('meh', '', '')], [('gnumeric', '', ''), ('lol', '', '')]]
+		# which roughly translates to:
+		# abiword (>= 5.0) | meh, gnumeric | lol
+
+		for group in relationships:
+			if not self.check_relationship(group):
+				return False
+
+		return True
+
 	def update(self):
 		"""
 		Updates the package cache.
