@@ -282,11 +282,12 @@ class APT:
 					logger.debug("Broken packages, fixing...")
 					self.cache.clear()
 					self.open_cache()
+					package_manager = apt_pkg.PackageManager(self.cache._depcache)
 					fixer = apt_pkg.ProblemResolver(self.cache._depcache)
 					fixer.resolve(True)
 					
 					# FIXME: should notify this?
-					self.fetch(package_manager)
+					#self.fetch(package_manager)
 					self.packages_install_progress.run(package_manager)
 					
 					# Restore working state for the next upgrade run
