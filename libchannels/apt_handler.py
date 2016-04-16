@@ -114,7 +114,7 @@ class APT:
 		
 		try:
 			return self.cache.required_download, self.cache.required_space
-		except SystemError as err:
+		except Exception as err:
 			self.notify_error("An error occurred", err)
 			return 0, 0
 
